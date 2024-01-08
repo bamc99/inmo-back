@@ -1,0 +1,121 @@
+{
+	"id": 114571,
+	"authentication": "MOFFIN",
+	"service": "prospector_pf",
+	"status": "SUCCESS",
+	"metadata": {
+	  "query": {
+		"rfc": "POBF620301000",
+		"city": null,
+		"curp": null,
+		"email": null,
+		"phone": null,
+		"state": "MEX",
+		"address": "CJON OCAMPO 3",
+		"country": "MX",
+		"zipCode": "56030",
+		"birthdate": "1962-03-01T06:00:00.000Z",
+		"firstName": "J. FELIX",
+		"externalId": null,
+		"middleName": null,
+		"accountType": "PF",
+		"nationality": "MX",
+		"municipality": "CHIAUTLA",
+		"neighborhood": "BARR SAN JUAN",
+		"firstLastName": "PONCE",
+		"secondLastName": "BOJORGES"
+	  },
+	  "clientType": "PF",
+	  "reportType": "prospector_pf",
+	  "saveResponse": true
+	},
+	"query": {
+	  "header": {
+		"version": "12",
+		"reference": "0ab959be-bf4f-442f-8d61-7",
+		"countryCode": "MX",
+		"userKey": "FF8*******",
+		"password": "********",
+		"productKey": "107",
+		"language": "SP",
+		"responsibilityType": "I",
+		"productType": "CC",
+		"currencyCode": "MX",
+		"loanAmount": "000000000",
+		"outputType": "01",
+		"responseBlockSize": " "
+	  },
+	  "name": {
+		"firstname": "J FELIX",
+		"firstLastname": "PONCE",
+		"secondLastname": "BOJORGES",
+		"birthdate": "01031962",
+		"rfc": "POBF620301000",
+		"countryKey": "MX",
+		"nationality": "MX"
+	  },
+	  "address": {
+		"address": "CJON OCAMPO 3 3",
+		"municipality": "CHIAUTLA",
+		"neighborhood": "BARR SAN JUAN",
+		"state": "EM",
+		"zipCode": "56030",
+		"addressCountry": "MX"
+	  }
+	},
+	"response": {
+	  "intlQuery": "INTL120ab959be-bf4f-442f-8d61-7107MX0000FF8***************ICCMX000000000SP01     0000000PN05PONCE0008BOJORGES0207J FELIX0408010319620513POBF6203010000802MX1602MXPA15CJON OCAMPO 3 30113BARR SAN JUAN0208CHIAUTLA0402EM0505560301302MXES05002450002**",
+	  "intl": "INTL120ab959be-bf4f-442f-8d61-7MX0000FF8*******10PN05PONCE0008BOJORGES0207J FELIX0408010319620513POBF6203010000802MX1602MXPA15CJON OCAMPO 3 30113BARR SAN JUAN0208CHIAUTLA0402EM0505560301302MXSC08BC SCORE000300701040526020217030207ES0500259001026763750320102**",
+	  "json": {
+		"reference": "0ab959be-bf4f-442f-8d61-7",
+		"name": {
+		  "firstLastname": "PONCE",
+		  "secondLastname": "BOJORGES",
+		  "firstname": "J FELIX",
+		  "birthdate": "01031962",
+		  "rfc": "POBF620301000",
+		  "nationality": "MX",
+		  "countryKey": "MX"
+		},
+		"address": {
+		  "address": "CJON OCAMPO 3 3",
+		  "neighborhood": "BARR SAN JUAN",
+		  "municipality": "CHIAUTLA",
+		  "state": "EM",
+		  "zipCode": "56030",
+		  "addressCountry": "MX"
+		},
+		"score": {
+		  "name": "BC SCORE",
+		  "code": "007",
+		  "value": "0726",
+		  "cause1": "17",
+		  "cause2": "07"
+		},
+		"fileEnd": {
+		  "fileLength": "00259",
+		  "endMark": "**"
+		},
+		"header": {
+		  "segmentTag": "INTL",
+		  "version": "12",
+		  "reference": "0ab959be-bf4f-442f-8d61-7",
+		  "countryCode": "MX",
+		  "reservedUse1": "0000",
+		  "userKey": "FF82481003",
+		  "wasFound": "1",
+		  "reservedUse2": "0"
+		}
+	  }
+	},
+	"requesterId": 1061,
+	"organizationId": 80,
+	"profileId": 76777,
+	"uuid": "0ab959be-bf4f-442f-8d61-77a755a1e76e",
+	"updatedAt": "2022-09-28T23:00:07.656Z",
+	"createdAt": "2022-09-28T23:00:06.780Z",
+	"state": null,
+	"cachedFrom": null,
+	"externalId": null,
+	"formId": null
+  }
