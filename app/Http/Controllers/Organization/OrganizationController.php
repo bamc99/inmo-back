@@ -25,7 +25,8 @@ use Illuminate\Validation\ValidationException;
 class OrganizationController extends Controller
 {
 
-    public function getAll( Request $request ) {
+    public function getAll(Request $request)
+    {
 
         $limit = $request->get('limit', 25);
         $offset = $request->get('offset', 0);
@@ -34,7 +35,7 @@ class OrganizationController extends Controller
         /** @var User $authUser */
         $authUser = Auth::user();
 
-        if(!$authUser) {
+        if (!$authUser) {
             return response()->json([
                 'message' => 'No estás autenticado',
                 'errors' => [],
@@ -44,7 +45,7 @@ class OrganizationController extends Controller
             ], 401);
         }
 
-        if(!$authUser->hasRole('admin') ){
+        if (!$authUser->hasRole('admin')) {
             return response()->json([
                 'message' => 'No tienes permisos para realizar esta acción',
                 'errors' => [],
@@ -54,7 +55,7 @@ class OrganizationController extends Controller
             ], 403);
         }
 
-        if(empty($searchTerm)) {
+        if (empty($searchTerm)) {
             // Obtiene la lista de organizaciones
             /** @var \App\Models\Organization $clients **/
             $organizations = Organization::with('owner')
@@ -65,40 +66,40 @@ class OrganizationController extends Controller
             $total = Organization::count();
 
             // Devuelve la lista de clientes en una respuesta JSON.
-            return response()->json([ 'organizations' => $organizations, 'total' => $total ], 200);
+            return response()->json(['organizations' => $organizations, 'total' => $total], 200);
         }
 
         /** $var \App\Models\Organization $clients **/
-        $organizations = Organization::where(function( $q ) use ($searchTerm) {
+        $organizations = Organization::where(function ($q) use ($searchTerm) {
             $q->where('name', 'LIKE', '%' . $searchTerm . '%')
                 ->orWhere('type', 'LIKE', '%' . $searchTerm . '%');
         })
-        ->orWhereHas('owner', function( $q ) use ($searchTerm) {
-            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
-        })
-        ->with('owner')
-        ->skip($offset)
-        ->take($limit)
-        ->get();
+            ->orWhereHas('owner', function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+            })
+            ->with('owner')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
 
         return [
             'organizations' => $organizations
         ];
-
     }
 
-    public function getOrganizationAuth() {
+    public function getOrganizationAuth()
+    {
 
         /** @var User $authUser */
         $authUser = Auth::user();
 
-        if( !$authUser->my_organization ) {
+        if (!$authUser->my_organization) {
             return response()->json([
                 'message' => 'No tienes una organización',
                 'errors' => [],
                 'data' => [
                     'organization_id' => null
-                    ]
+                ]
             ], 404);
         }
 
@@ -114,7 +115,8 @@ class OrganizationController extends Controller
         ], 200);
     }
 
-    public function addCollaborator( Request $request ) {
+    public function addCollaborator(Request $request)
+    {
 
         $errors = [];
 
@@ -123,14 +125,14 @@ class OrganizationController extends Controller
 
             $addCollaboratorRequest = $request->validate([
                 'email' => 'required|email'
-            ],[
+            ], [
                 'email.required' => 'El correo electrónico es requerido',
                 'email.email' => 'El correo electrónico no es válido'
             ]);
 
             /** @var User $authUser */
             $authUser = Auth::user();
-            if(!$authUser->my_organization) {
+            if (!$authUser->my_organization) {
                 return response()->json([
                     'message' => 'No tienes una organización',
                     'errors' => [],
@@ -150,7 +152,7 @@ class OrganizationController extends Controller
                 ], 404);
             }
 
-            if( $authUser->id === $userToCollaborate->id ) {
+            if ($authUser->id === $userToCollaborate->id) {
                 $errors['email'] = ['No puedes invitarte a ti mismo como colaborador.'];
                 return response()->json([
                     'message' => 'No puedes invitarte a ti mismo como colaborador.',
@@ -199,7 +201,7 @@ class OrganizationController extends Controller
                 'expireInDays' => $expireInDays,
             ]);
 
-            SendEmail::dispatch($userToCollaborate->email, $addCollaboratorEmail );
+            SendEmail::dispatch($userToCollaborate->email, $addCollaboratorEmail);
 
             DB::commit();
             return response()->json([
@@ -230,15 +232,16 @@ class OrganizationController extends Controller
         }
     }
 
-    public function acceptInvitation ( Request $request ) {
+    public function acceptInvitation(Request $request)
+    {
         $errors = [];
 
         DB::beginTransaction();
-        try{
+        try {
 
             $collaboratorRole = Role::where('name', 'collaborator')->first();
 
-            if(!$collaboratorRole) {
+            if (!$collaboratorRole) {
                 $errors['role'] = ['No se encontró el rol de colaborador.'];
                 return response()->json([
                     'message' => 'No se encontró el rol de colaborador.',
@@ -337,9 +340,9 @@ class OrganizationController extends Controller
 
             $userToCollaborate->assignRole('collaborator', $collaboratorRole);
 
-            if( $organization->type === 'inmobiliaria' ) {
+            if ($organization->type === 'inmobiliaria') {
                 $userToCollaborate->givePermissionTo('collaborator_inmobiliaria');
-            } else if( $organization->type === 'desarrollo' ) {
+            } else if ($organization->type === 'desarrollo') {
                 $userToCollaborate->givePermissionTo('collaborator_desarrollo');
             } else {
                 return response()->json([
@@ -353,7 +356,7 @@ class OrganizationController extends Controller
             return response()->json([
                 'message' => 'Se ha agregado al usuario como colaborador de la organización.',
             ], 200);
-        }  catch (QueryException $e) {
+        } catch (QueryException $e) {
             Log::error($e->getMessage());
             DB::rollBack();
             return response()->json([
@@ -370,10 +373,10 @@ class OrganizationController extends Controller
                 ],
             ], 500);
         }
-
     }
 
-    public function newOrganization ( StoreOrganizationRequest $storeOrganizationRequest ) {
+    public function newOrganization(StoreOrganizationRequest $storeOrganizationRequest)
+    {
 
         $storeOrganizationRequest->validated();
 
@@ -389,7 +392,7 @@ class OrganizationController extends Controller
             $ownerRole = Role::where('name', 'owner')
                 ->where('guard_name', 'web')->first();
 
-            if( $authUser->organization ) {
+            if ($authUser->organization) {
                 return response()->json([
                     'message' => 'No puedes crear una organización si ya tienes una',
                     'errors' => [],
@@ -407,15 +410,15 @@ class OrganizationController extends Controller
 
             $authUser->assignRole($ownerRole);
 
-            if( $newOrganization->type === 'inmobiliaria' ) {
+            if ($newOrganization->type === 'inmobiliaria') {
                 $permission = Permission::where('name', 'collaborator_inmobiliaria')
-                            ->where('guard_name', 'web')
-                            ->first();
+                    ->where('guard_name', 'web')
+                    ->first();
                 $authUser->givePermissionTo($permission);
-            } else if( $newOrganization->type === 'desarrollo' ) {
+            } else if ($newOrganization->type === 'desarrollo') {
                 $permission = Permission::where('name', 'collaborator_desarrollo')
-                            ->where('guard_name', 'web')
-                            ->first();
+                    ->where('guard_name', 'web')
+                    ->first();
                 $authUser->givePermissionTo($permission);
             }
 
@@ -454,7 +457,87 @@ class OrganizationController extends Controller
         }
     }
 
-    public function update( Request $request, $organizationId ){
+    public function newInmoFromController($userId, $organizationName)
+    {
+        $errors = [];
+
+        DB::beginTransaction();
+
+        try {
+
+            /** @var User $authUser */
+            $authUser = User::find($userId);
+
+            $ownerRole = Role::where('name', 'owner')
+                ->where('guard_name', 'web')->first();
+
+            if ($authUser->organization) {
+                return response()->json([
+                    'message' => 'No puedes crear una organización si ya tienes una',
+                    'errors' => [],
+                    'data' => [
+                        'organization_id' => $authUser->organization->id
+                    ]
+                ], 400);
+            }
+
+            $newOrganization = Organization::create([
+                'name' => $organizationName,
+                'type' => 'inmobiliaria',
+                'owner_id' => $authUser->id,
+            ]);
+
+            $authUser->assignRole($ownerRole);
+
+            if ($newOrganization->type === 'inmobiliaria') {
+                $permission = Permission::where('name', 'collaborator_inmobiliaria')
+                    ->where('guard_name', 'web')
+                    ->first();
+                $authUser->givePermissionTo($permission);
+            } else if ($newOrganization->type === 'desarrollo') {
+                $permission = Permission::where('name', 'collaborator_desarrollo')
+                    ->where('guard_name', 'web')
+                    ->first();
+                $authUser->givePermissionTo($permission);
+            }
+
+            Membership::create([
+                'user_id' => $authUser->id,
+                'organization_id' => $newOrganization->id,
+            ]);
+
+            DB::commit();
+            return [
+                'message' => 'Organización creada correctamente',
+                'data' => $newOrganization
+            ];
+        } catch (ValidationException $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+            return [
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ];
+        } catch (QueryException $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+            return [
+                'message' => 'Error interno del servidor',
+                'errors' => []
+            ];
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            DB::rollBack();
+            return [
+                'message' => 'Ocurrió un error al crear la organización',
+                'errors' => $errors,
+                'exception' => $th->getMessage()
+            ];
+        }
+    }
+
+    public function update(Request $request, $organizationId)
+    {
 
         $requestData = $request->validate([
             'name' => 'string|max:255',
@@ -471,7 +554,7 @@ class OrganizationController extends Controller
 
             $organization = Organization::where('id', $organizationId);
 
-            if( !$authUser->is_admin ) {
+            if (!$authUser->is_admin) {
                 $organization = $organization->where('owner_id', $authUser->id);
             }
 
@@ -505,5 +588,4 @@ class OrganizationController extends Controller
             ], 500);
         }
     }
-
 }

@@ -116,12 +116,14 @@ class Quotation extends Model
     public function simulations(){
         $client = $this->client;
 
-        $cacheKey = 'simulations_' . $this->id;
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
+        // $cacheKey = 'simulations_' . $this->id;
+        // if (Cache::has($cacheKey)) {
+        //     return Cache::get($cacheKey);
+        // }
 
-        $url = 'https://pruebacliente.toi.com.mx/comparativo/cliente';
+        // $url = 'http://pruebacliente.toi.com.mx/comparativo/cliente';
+        $url = 'http://clientedev.toi.com.mx/comparativo/cliente';
+
         $response = Http::get($url, [
             "fechaNacimiento" => $client->profile->birth_date ?? "",
             "producto" => $this->credit_type,
@@ -162,7 +164,7 @@ class Quotation extends Model
                 }
                 $simulations[$key] = $simulation;
             }
-            Cache::put($cacheKey, $simulations, 1440); // 8
+            // Cache::put($cacheKey, $simulations, 1440); // 8
         }
         return $simulations;
     }

@@ -22,6 +22,8 @@ use App\Http\Controllers\UserController;
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
     Route::post('/signup', [AuthController::class, 'signup'])->name('auth.signup');
+    Route::post('/signupinmo', [AuthController::class, 'signUpWithInmobiliaria'])->name('auth.signUpWithInmobiliaria');
+
 
     // Rutas protegidas por autenticación
     Route::group([ 'middleware' => 'auth:sanctum' ], function() {
