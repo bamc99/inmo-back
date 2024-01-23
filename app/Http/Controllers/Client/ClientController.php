@@ -534,7 +534,7 @@ class ClientController extends Controller
         if (empty($searchTerm)) {
             // Concatenar sitoi
             $url = env('SITOI_URL', 'http://localhost:80');
-            $url = $url."/openapi/getByInmo.php";
+            $url = $url . "/openapi/getByInmo.php";
             $response = Http::get($url, [
                 "inmo" => $organization->id,
             ]);
@@ -542,7 +542,7 @@ class ClientController extends Controller
             if (!$response->failed()) {
                 $holdMyClients = $response->json();
                 foreach ($holdMyClients as $key => $client) {
-                    $holdMyClients[$key]['id'] = 'S'.$client['id'];
+                    $holdMyClients[$key]['id'] = 'S' . $client['id'];
 
                     // Normalizar keys
                     $holdMyClients[$key]['full_name'] = ($client['nombre']) ? $client['nombre'] : $client['nombrefallback'];
@@ -664,6 +664,29 @@ class ClientController extends Controller
     {
 
         if (!is_numeric($clientId)) {
+
+            if (substr($clientId, 0, 1) === "S") {
+                // Concatenar sitoi
+                $url = env('SITOI_URL', 'http://localhost:80');
+                $url = $url . "/openapi/getClient.php";
+                $response = Http::get($url, [
+                    "id" => substr($clientId, 1),
+                ]);
+                $holdMyClients = [];
+                if (!$response->failed()) {
+                    $client = $response->json();
+                    return response()->json(['client' => $client], 200);
+                }else{
+                    return response()->json([
+                        'message' => 'Invalid id'
+                    ], 400);
+                }
+                
+            } else {
+                return response()->json([
+                    'message' => 'Invalid id'
+                ], 400);
+            }
             return response()->json([
                 'message' => 'Invalid id'
             ], 400);

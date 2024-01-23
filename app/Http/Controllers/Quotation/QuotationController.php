@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -121,6 +122,28 @@ class QuotationController extends Controller
     {
 
         if (!is_numeric($clientId)) {
+            if (substr($clientId, 0, 1) === "S") {
+                // Concatenar sitoi
+                $url = env('SITOI_URL', 'http://localhost:80');
+                $url = $url . "/openapi/getQuotation.php";
+                $response = Http::get($url, [
+                    "id" => substr($clientId, 1),
+                    "quotation_id" => $quotationId,
+                ]);
+                if (!$response->failed()) {
+                    $quotation = $response->json();
+                    return response()->json(['quotation' => $quotation, 'simulations'=>$this->simulationsMinifiedHTTP($quotation)], 200);
+                }else{
+                    return response()->json([
+                        'message' => 'Invalid id'
+                    ], 400);
+                }
+                
+            } else {
+                return response()->json([
+                    'message' => 'Invalid id'
+                ], 400);
+            }
             return response()->json([
                 'message' => 'Invalid id'
             ], 400);
@@ -181,6 +204,28 @@ class QuotationController extends Controller
     {
 
         if (!is_numeric($clientId)) {
+            if (substr($clientId, 0, 1) === "S") {
+                // Concatenar sitoi
+                $url = env('SITOI_URL', 'http://localhost:80');
+                $url = $url . "/openapi/getQuotation.php";
+                $response = Http::get($url, [
+                    "id" => substr($clientId, 1),
+                    "quotation_id" => $quotationId,
+                ]);
+                if (!$response->failed()) {
+                    $quotation = $response->json();
+                    return response()->json(['quotation' => $quotation, 'simulation'=>$this->simulationMinified($bankName, $quotation)], 200);
+                }else{
+                    return response()->json([
+                        'message' => 'Invalid id'
+                    ], 400);
+                }
+                
+            } else {
+                return response()->json([
+                    'message' => 'Invalid id'
+                ], 400);
+            }
             return response()->json([
                 'message' => 'Invalid id'
             ], 400);
@@ -249,6 +294,29 @@ class QuotationController extends Controller
     {
 
         if (!is_numeric($clientId)) {
+            if (substr($clientId, 0, 1) === "S") {
+                // Concatenar sitoi
+                $url = env('SITOI_URL', 'http://localhost:80');
+                $url = $url . "/openapi/getQuotation.php";
+                $response = Http::get($url, [
+                    "id" => substr($clientId, 1),
+                    "quotation_id" => $quotationId,
+                ]);
+                if (!$response->failed()) {
+                    $quotation = $response->json();
+                    $simulacion = $this->simulation($bankName, $quotation);
+                    return response()->json(['amortization' => $simulacion['montos']['amortizacion'] ?? []], 200);
+                }else{
+                    return response()->json([
+                        'message' => 'Invalid id'
+                    ], 400);
+                }
+                
+            } else {
+                return response()->json([
+                    'message' => 'Invalid id'
+                ], 400);
+            }
             return response()->json([
                 'message' => 'Invalid id'
             ], 400);
@@ -309,5 +377,75 @@ class QuotationController extends Controller
         return response()->json([
             'amortization' => $simulation['montos']['amortizacion'] ?? []
         ]);
+    }
+
+    public function getSimulationsHTTP($quotation){
+        $url = 'http://clientedev.toi.com.mx/comparativo/cliente';
+
+        // Generic
+        $response = Http::get($url, [
+            "fechaNacimiento" => '1969-12-28',
+            "producto" => $quotation['tipo'],
+            "plazo" => $quotation['plazo'],
+            "valorVivienda" => $quotation['property_value'],
+            "valorProyecto" => 0,
+            "valorViviendaAdicional" => 0,
+            "porcentajeNotarial" => $quotation['notariales'],
+            "tipoTaza" => 2, // Media
+            "sueldo" => $quotation['ingreso'],
+            "subcuenta" => $quotation['subcuenta'],
+            "infonavit" => $quotation['credito_infonavit'],
+            "montoCredito" => $quotation['credito'],
+            "estado" => $quotation['ubicacion'],
+            "pagos" => $quotation['esquema'] === "fijos" ? 0 : 1, // Fijos o Crecientes
+            "terreno" => $quotation['terreno'],
+            "construccion" => $quotation['construccion'],
+            "adeudoActual" => $quotation['adeudo_actual'],
+            "importeCredito" => $quotation['importe_credito'],
+            "presupuestoRemodelacion" => $quotation['presupuesto_remodelacion'],
+            "enganche" => $quotation['enganche'],
+        ]);
+        $simulations = [
+            "banorte"       => [ "montos" => null ],
+            "hsbc"          => [ "montos" => null ],
+            "santander"     => [ "montos" => null ],
+            "scotiabank"    => [ "montos" => null ],
+            "afirme"        => [ "montos" => null ],
+            "citi"          => [ "montos" => null ],
+            "hey"           => [ "montos" => null ],
+            "santanderFree" => [ "montos" => null ],
+        ];
+        if (!$response->failed()) {
+            $simulations = [];
+            foreach ($response->json() as $key => $simulation) {
+                if(isset($simulation['montos']['error'])) {
+                    $simulation['montos'] = null;
+                }
+                $simulations[$key] = $simulation;
+            }
+            // Cache::put($cacheKey, $simulations, 1440); // 8
+        }
+        return $simulations;
+    }
+
+    public function simulationsMinifiedHTTP($quotation){
+        $simulations = $this->getSimulationsHTTP($quotation);
+        foreach ($simulations as &$simulation) {
+            unset($simulation['montos']['amortizacion']);
+            unset($simulation['montos']['dataTir']);
+            unset($simulation['montos']['arrayTir']);
+        }
+        unset($simulation);
+        return $simulations;
+    }
+
+    public function simulation( $bank, $quotation) {
+        $simulations = $this->getSimulationsHTTP($quotation);
+        return $simulations[$bank] ?? null;
+    }
+
+    public function simulationMinified( $bank, $quotation ) {
+        $simulations = $this->simulationsMinifiedHTTP($quotation);
+        return $simulations[$bank] ?? null;
     }
 }
