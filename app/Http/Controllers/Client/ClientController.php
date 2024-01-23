@@ -533,7 +533,8 @@ class ClientController extends Controller
         $sitoiClients = [];
         if (empty($searchTerm)) {
             // Concatenar sitoi
-            $url = "http://localhost:80/openapi/getByInmo.php";
+            $url = env('SITOI_URL', 'http://localhost:80');
+            $url = $url."/openapi/getByInmo.php";
             $response = Http::get($url, [
                 "inmo" => $organization->id,
             ]);
