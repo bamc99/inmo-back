@@ -545,7 +545,8 @@ class ClientController extends Controller
                     $holdMyClients[$key]['id'] = 'S'.$client['id'];
 
                     // Normalizar keys
-                    $holdMyClients[$key]['full_name'] = $client['nombre'];
+                    $holdMyClients[$key]['full_name'] = ($client['nombre']) ? $client['nombre'] : $client['nombrefallback'];
+
                     $holdMyClients[$key]['profile']['phone_number'] = $client['telefono'];
                     $holdMyClients[$key]['email'] = $client['correo'];
                     $holdMyClients[$key]['profile']['score'] = $client['score'];
