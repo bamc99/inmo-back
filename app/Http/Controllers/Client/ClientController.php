@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -529,14 +530,37 @@ class ClientController extends Controller
                 ->with('user');
         }
 
+        $sitoiClients = [];
         if (empty($searchTerm)) {
+            // Concatenar sitoi
+            $url = "http://localhost:80/openapi/getByInmo.php";
+            $response = Http::get($url, [
+                "inmo" => $organization->id,
+            ]);
+            $holdMyClients = [];
+            if (!$response->failed()) {
+                $holdMyClients = $response->json();
+                foreach ($holdMyClients as $key => $client) {
+                    $holdMyClients[$key]['id'] = 'S'.$client['id'];
+
+                    // Normalizar keys
+                    $holdMyClients[$key]['full_name'] = $client['nombre'];
+                    $holdMyClients[$key]['profile']['phone_number'] = $client['telefono'];
+                    $holdMyClients[$key]['email'] = $client['correo'];
+                    $holdMyClients[$key]['profile']['score'] = $client['score'];
+                    $holdMyClients[$key]['user']['full_name'] = $client['experto'];
+                }
+            }
 
             $clients = $clientQuery->skip($offset)->take($limit)->get();
             $total = $clientQuery->count();
 
+            $mergeClients = array_merge($clients->toArray(), $holdMyClients);
             return response()->json([
-                'clients' => $clients,
+                'clients' => $mergeClients,
                 'total' => $total,
+                'inmoClients' => $clients,
+                'sitoiClients' => $holdMyClients,
             ], 200);
         }
 
@@ -554,11 +578,16 @@ class ClientController extends Controller
             ->orWhereHas('profile', $profileQuery);
 
         $clients = $clientQuery->skip($offset)->take($limit)->get();
-        $total = $clientQuery->count();
+        $total = $clientQuery->count() + 2;
+
+        // Concatenar sitoi
+        $url = "http://localhost:80/openapi/getByInmo.php?inmo=$organization";
+
 
         return response()->json([
             'clients' => $clients,
             'total' => $total,
+            'url' => $url
         ], 200);
     }
 
@@ -621,7 +650,6 @@ class ClientController extends Controller
                 ],
             ], 500);
         }
-
     }
 
     /**
