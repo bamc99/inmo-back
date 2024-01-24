@@ -35,5 +35,9 @@ class InmuebleComprar extends Model
         'direcciones',
         'new_latitud',
         'new_longitud',
+        'url',
+        'telefono',
+        'nombre_asesor',
+        'email'
     ];
 }
