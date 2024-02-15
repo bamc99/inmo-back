@@ -285,10 +285,12 @@
                             </h1>
                             <p class="text-base">Has recibido este correo electrónico porque has solicitado restablecer tu contraseña en TOI. Este código de verificación expirará en {{ $data['expireInHours'] }} hora(s).
                             </p>
-                            <p class="text-base">Para restablecer tu contraseña, haz clic en el botón de abajo o pega el siguiente código en la aplicación y sigue las instrucciones:
+                            <p class="text-base">Para restablecer tu contraseña, haz clic en el botón de abajo y sigue las instrucciones:
                             </p>
 
-                            <h5 class="text-base" style="margin: 20px 5px; text-align: center;">{{ $data['code'] }}</h5>
+                            <h5 class="text-base" style="margin: 20px 5px; text-align: center;">
+                                <a href="{{ $data['action_url'] }}">{{ $data['action_url'] }}</a>
+                            </h5>
 
                             <!-- Action -->
                             <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">

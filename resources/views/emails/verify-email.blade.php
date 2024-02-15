@@ -287,7 +287,7 @@
                                             Haz clic en el enlace para acceder a una página donde podrás verificar tu dirección de correo electrónico y completar el registro en TOI
                                         </p>
                                         <h5 class="text-base text-verification-code" style="font-size: 1.5rem !important; margin: 20px 5px; text-align: center;">
-                                            {{ $data['verificationCode'] }}
+                                            <a href="{{ $data['action_url'] }}">{{ $data['action_url'] }}</a>
                                         </h5>
 
                                         <!-- Action -->
