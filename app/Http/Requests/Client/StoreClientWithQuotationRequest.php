@@ -36,8 +36,8 @@ class StoreClientWithQuotationRequest extends FormRequest
             'client.additionalIncome'           => ['numeric'],
             'client.attachmentId'               => ['numeric', 'exists:attachments,id'],
             'client.birthDate'                  => ['date', 'date_format:Y-m-d'],
-            'client.monthlyIncome'              => ['numeric'],
-            'client.phoneNumber'                => ['string'],
+            'client.monthlyIncome'              => ['required', 'numeric'],
+            'client.phoneNumber'                => ['required', 'string'],
             'client.rfc'                        => ['string'],
 
             'client.street'                     => ['string'],
@@ -82,6 +82,8 @@ class StoreClientWithQuotationRequest extends FormRequest
             'client.email.email'                         => 'El correo electrónico del cliente debe ser una dirección de correo electrónico válida.',
             'client.email.unique'                        => 'El correo electrónico del cliente ya existe en la base de datos.',
             'client.phoneNumber.string'                  => 'El número telefónico del cliente debe ser una cadena de caracteres.',
+            'client.phoneNumber.required'                => 'El número telefónico del cliente es obligatorio.',
+
             // 'client.rfc.required'                        => 'El RFC del cliente es obligatorio.',
             'client.rfc.string'                          => 'El RFC del cliente debe ser una cadena de caracteres.',
             'client.birthDate.date'                      => 'La fecha de nacimiento del cliente debe ser una fecha válida.',
@@ -98,6 +100,7 @@ class StoreClientWithQuotationRequest extends FormRequest
             'quotation.additionalPropertyValue.min'      => 'El valor adicional de la propiedad debe ser mayor o igual a cero.',
             'quotation.additionalIncome.numeric'         => 'El ingreso adicional de la cotización debe ser un valor numérico.',
             'quotation.monthlyIncome.numeric'            => 'El ingreso mensual de la cotización debe ser un valor numérico.',
+            'quotation.monthlyIncome.required'           => 'El ingreso mensual del cliente es requerido.',
             'quotation.additionalPropertyValue.numeric'  => 'El valor adicional de la propiedad debe ser un valor numérico.',
             'quotation.additionalPropertyValue.required' => 'El valor adicional de la propiedad es obligatorio.',
             'quotation.constructionArea.min'             => 'El área de construcción debe ser mayor o igual a cero.',
