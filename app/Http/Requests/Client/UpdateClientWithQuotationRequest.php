@@ -54,7 +54,8 @@ class UpdateClientWithQuotationRequest extends FormRequest
         ];
     }
 
-    public function messages() {
+    public function messages()
+    {
         return [
             'client.additionalIncome.numeric'            => 'El ingreso adicional del cliente debe ser un valor numérico.',
             'client.address.string'                      => 'La dirección del cliente debe ser una cadena de texto.',
@@ -72,7 +73,8 @@ class UpdateClientWithQuotationRequest extends FormRequest
             'client.name.required'                       => 'El nombre del cliente es obligatorio.',
             'client.phoneNumber.string'                  => 'El teléfono del cliente debe ser una cadena de texto.',
             'client.postalCode.string'                   => 'El código postal del cliente debe ser una cadena de texto.',
-            'client.rfc.required'                        => 'El RFC del cliente es obligatorio.',
+            'client.rfc.string'                          => 'El RFC del cliente debe ser una cadena de caracteres.',
+            // 'client.rfc.required'                     => 'El RFC del cliente es obligatorio.',
             'quotation.additionalPropertyValue.min'      => 'El valor adicional de la propiedad debe ser mayor o igual a cero.',
             'quotation.additionalPropertyValue.numeric'  => 'El valor adicional de la propiedad debe ser un valor numérico.',
             'quotation.additionalPropertyValue.required' => 'El valor adicional de la propiedad es obligatorio.',

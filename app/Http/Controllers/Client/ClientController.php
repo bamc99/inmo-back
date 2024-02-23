@@ -99,9 +99,21 @@ class ClientController extends Controller
                 'email' => $clientRequestData['email'] ?? $client->email,
             ]);
 
+            $updateRfc = '';
+            // Evaluate RFC
+            if (isset($clientRequestData['rfc'])) {
+                if ($clientRequestData['rfc'] === 'CLEAR-RFC') {
+                    $updateRfc = null;
+                }else{
+                    $updateRfc = Str::upper($clientRequestData['rfc']);
+                }
+            }else{
+                $updateRfc = $client->profile->rfc;
+            }
+
             $client->profile()->update([
                 'last_name'         => $clientRequestData['lastName'] ?? $client->profile->last_name,
-                'rfc'               => isset($clientRequestData['rfc']) ? Str::upper($clientRequestData['rfc']) : $client->profile->rfc,
+                'rfc'               => $updateRfc,
                 'phone_number'      => $clientRequestData['phoneNumber'] ?? $client->profile->phone_number,
                 'street'            => $clientRequestData['street'] ?? null,
                 'house_number'      => $clientRequestData['house_number'] ?? null,

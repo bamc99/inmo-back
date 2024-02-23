@@ -38,7 +38,7 @@ class StoreClientWithQuotationRequest extends FormRequest
             'client.birthDate'                  => ['date', 'date_format:Y-m-d'],
             'client.monthlyIncome'              => ['numeric'],
             'client.phoneNumber'                => ['string'],
-            'client.rfc'                        => ['required', 'string'],
+            'client.rfc'                        => ['string'],
 
             'client.street'                     => ['string'],
             'client.house_number'               => ['string'],
@@ -82,7 +82,7 @@ class StoreClientWithQuotationRequest extends FormRequest
             'client.email.email'                         => 'El correo electrónico del cliente debe ser una dirección de correo electrónico válida.',
             'client.email.unique'                        => 'El correo electrónico del cliente ya existe en la base de datos.',
             'client.phoneNumber.string'                  => 'El número telefónico del cliente debe ser una cadena de caracteres.',
-            'client.rfc.required'                        => 'El RFC del cliente es obligatorio.',
+            // 'client.rfc.required'                        => 'El RFC del cliente es obligatorio.',
             'client.rfc.string'                          => 'El RFC del cliente debe ser una cadena de caracteres.',
             'client.birthDate.date'                      => 'La fecha de nacimiento del cliente debe ser una fecha válida.',
             'client.birthDate.date_format'               => 'La fecha de nacimiento del cliente debe tener el formato Y-m-d.',

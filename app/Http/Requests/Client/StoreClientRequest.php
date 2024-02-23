@@ -32,7 +32,7 @@ class StoreClientRequest extends FormRequest
             'name'             => ['required', 'string'],
             'phoneNumber'      => ['string'],
             'postalCode'       => ['string'],
-            'rfc'              => ['required', 'string'],
+            'rfc'              => ['string'],
             'score'            => ['numeric'],
         ];
     }
@@ -56,7 +56,7 @@ class StoreClientRequest extends FormRequest
             'name.string'              => 'El nombre debe ser una cadena de caracteres.',
             'phoneNumber.string'       => 'El número de teléfono debe ser una cadena de caracteres.',
             'postalCode.string'        => 'El código postal debe ser una cadena de caracteres.',
-            'rfc.required'             => 'El RFC es requerido.',
+            // 'rfc.required'             => 'El RFC es requerido.',
             'rfc.string'               => 'El RFC debe ser una cadena de caracteres.',
             'score.numeric'            => 'El puntaje debe ser un número.',
         ];
