@@ -53,7 +53,7 @@ class InmuebleController extends Controller
             $query->where('precios', '<=', $request->input('maxPrice'));
         }
 
-        $query->limit(250);
+        // $query->limit(250);
         return $query;
     }
 
